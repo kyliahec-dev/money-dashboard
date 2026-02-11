@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#0b1220" />
+  <title>Money Dashboard</title>
+
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+<header class="top">
+  <div>
+    <div class="title">Money Dashboard</div>
+    <div class="sub">Offline • On-device only</div>
+  </div>
+  <button id="btnInstallHint" class="ghost" type="button">Add to Home Screen</button>
+</header>
+
+<main class="shell">
+  <aside class="side" id="leftPane"></aside>
+
+  <div class="wrap" id="centerPane">
+  <!-- BALANCES -->
+  <section class="card">
+    <div class="cardTitle">Balances</div>
+
+    <div class="grid2">
+      <div class="field">
+        <label for="checkingNow">Checking (current)</label>
+        <input id="checkingNow" inputmode="decimal" placeholder="0" />
+      </div>
+      <div class="field">
+        <label for="hysaNow">HYSA (current)</label>
+        <input id="hysaNow" inputmode="decimal" placeholder="5000" />
+      </div>
+      <div class="field">
+        <label for="houseNow">House Savings (current)</label>
+        <input id="houseNow" inputmode="decimal" placeholder="0" />
+      </div>
+      <div class="field">
+        <label for="monthBills">Monthly Bills (reference)</label>
+        <div class="field">
+          <label for="billsRemaining">Bills Remaining (Until Next Paycheck)</label>
+          <input id="billsRemaining" inputmode="decimal" placeholder="0"/>
+        </div>
+        <input id="monthBills" inputmode="decimal" placeholder="2329" />
+      </div>
+    </div>
+
+    <div class="row">
+      <button id="btnSaveBalances" type="button">Save balances</button>
+      <button id="btnReset" class="danger ghost" type="button">Reset app data</button>
+    </div>
+    <div id="saveMsg" class="msg"></div>
+  </section>
+
+  <!-- GOALS -->
+  <section class="card">
+    <div class="cardTitle">Goals</div>
+
+    <div class="grid2">
+      <div class="field">
+        <label for="goalChecking">Checking goal</label>
+        <input id="goalChecking" inputmode="decimal" value="2000" />
+      </div>
+      <div class="field">
+        <label for="goalHYSA">HYSA goal</label>
+        <input id="goalHYSA" inputmode="decimal" value="10000" />
+      </div>
+      <div class="field">
+        <label for="goalHouseMonthly">House savings / month</label>
+        <input id="goalHouseMonthly" inputmode="decimal" value="1000" />
+      </div>
+      <div class="field">
+        <label for="paycheckAmount">Paycheck (biweekly)</label>
+        <input id="paycheckAmount" inputmode="decimal" value="2100" />
+      </div>
+    </div>
+
+    <div class="progressBlock">
+      <div class="progLine">
+        <div class="progLabel">Checking to goal</div>
+        <div class="progValue" id="progCheckingText"></div>
+      </div>
+      <progress id="progChecking" max="1" value="0"></progress>
+    </div>
+
+    <div class="progressBlock">
+      <div class="progLine">
+        <div class="progLabel">HYSA to goal</div>
+        <div class="progValue" id="progHYText"></div>
+      </div>
+      <progress id="progHY" max="1" value="0"></progress>
+    </div>
+
+    <div class="progressBlock">
+      <div class="progLine">
+        <div class="progLabel">House savings this month</div>
+        <div class="progValue" id="progHouseText"></div>
+      </div>
+      <progress id="progHouse" max="1" value="0"></progress>
+    </div>
+
+    <div class="row">
+      <button id="btnSaveGoals" type="button">Save goals</button>
+    </div>
+  </section>
+    <button id="btnResetHouseMonth" class="ghost" type="button">Reset house month</button>
+
+  <!-- PAYCHECK WIZARD -->
+  <section class="card">
+    <div class="cardTitle">Paycheck Plan (Wizard)</div>
+
+    <div class="pillRow">
+      <button id="pillNonBills" class="pill active" type="button">Not bills check</button>
+      <button id="pillBills" class="pill" type="button">Bills-heavy check</button>
+    </div>
+
+    <div class="grid2">
+      <div class="field">
+        <label for="wizRequiredBills">Required bills from this check</label>
+        <input id="wizRequiredBills" inputmode="decimal" placeholder="250" />
+      </div>
+      <div class="field">
+        <label for="wizCCPayoff">Credit cards to pay off</label>
+        <input id="wizCCPayoff" inputmode="decimal" placeholder="990" />
+      </div>
+      <div class="field">
+        <label for="wizHouseThisCheck">House savings from this check</label>
+        <input id="wizHouseThisCheck" inputmode="decimal" placeholder="1000" />
+      </div>
+      <div class="field">
+        <label for="wizNotes">Notes (optional)</label>
+        <input id="wizNotes" placeholder="e.g., Friday check" />
+      </div>
+      <div class="field">
+        <label for="wizScenario">Scenario label (optional)</label>
+        <input id="wizScenario" placeholder="e.g., Aggressive debt payoff" />
+      </div>
+    </div>
+
+    <div class="row">
+      <button id="btnGeneratePlan" type="button">Generate plan</button>
+      <button id="btnSavePlan" class="ghost" type="button">Save plan</button>
+      <button id="btnLogPlan" class="ghost" type="button">Log selected plan</button>
+    </div>
+
+    <div class="planSplit">
+      <div>
+        <div class="hint"><strong>Draft</strong> (latest generated)</div>
+        <div id="planOut" class="plan"></div>
+      </div>
+
+      <div>
+        <div class="hint"><strong>Saved Plans</strong> (tap one to select)</div>
+        <div id="planList" class="list"></div>
+
+        <div class="hint" style="margin-top:12px;"><strong>Selected Plan Details</strong></div>
+        <div id="planDetails" class="plan"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BIG WANT COOLDOWN -->
+  <section class="card">
+    <div class="cardTitle">Big Want Cooldown</div>
+
+    <div class="grid2">
+      <div class="field">
+        <label for="wantItem">Item</label>
+        <input id="wantItem" placeholder="Laptop, etc." />
+      </div>
+      <div class="field">
+        <label for="wantCost">Cost</label>
+        <input id="wantCost" inputmode="decimal" placeholder="0" />
+      </div>
+    </div>
+
+    <div class="row">
+      <button id="btnAddWant" type="button">Start cooldown</button>
+      <button id="btnClearWants" class="ghost danger" type="button">Clear all cooldowns</button>
+    </div>
+
+    <div id="wantList" class="list"></div>
+  </section>
+
+  <!-- HISTORY -->
+  <section class="card">
+    <div class="cardTitle">History</div>
+    <div class="row">
+      <button id="btnExport" class="ghost" type="button">Export data</button>
+      <button id="btnClearHistory" class="ghost danger" type="button">Clear history</button>
+    </div>
+    <div id="historyList" class="list"></div>
+  </section>
+  </div>
+
+  <aside class="side" id="rightPane"></aside>
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>
